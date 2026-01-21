@@ -85,6 +85,12 @@ const Map<int, dynamic> _arabicSubstitionA = <int, dynamic>{
   0x06AF: <int>[0xFB92, 0xFB93, 0xFB94, 0xFB95], // ARABIC LETTER GAF
   0x06B1: <int>[0xFB9A, 0xFB9B, 0xFB9C, 0xFB9D], // ARABIC LETTER NGOEH
   0x06B3: <int>[0xFB96, 0xFB97, 0xFB98, 0xFB99], // ARABIC LETTER GUEH
+  0x06B5: <dynamic>[
+    <int>[0x0644, 0x065A],
+    <int>[0xFEDE, 0x065A],
+    <int>[0xFEDF, 0x065A],
+    <int>[0xFEE0, 0x065A]
+  ], // ARABIC LETTER LAM WITH V
   0x06BA: <int>[0xFB9E, 0xFB9F], // ARABIC LETTER NOON GHUNNA
   0x06BB: <int>[0xFBA0, 0xFBA1, 0xFBA2, 0xFBA3], // ARABIC LETTER RNOON
   0x06BE: <int>[
@@ -102,9 +108,16 @@ const Map<int, dynamic> _arabicSubstitionA = <int, dynamic>{
   0x06C9: <int>[0xFBE2, 0xFBE3], // ARABIC LETTER KIRGHIZ YU
   0x06CB: <int>[0xFBDE, 0xFBDF], // ARABIC LETTER VE
   0x06CC: <int>[0xFBFC, 0xFBFD, 0xFBFE, 0xFBFF], // ARABIC LETTER FARSI YEH
+  0x06CE: <dynamic>[
+    <int>[0xFBFC, 0x065A],
+    <int>[0xFBFD, 0x065A],
+    <int>[0xFBFE, 0x065A],
+    <int>[0xFBFF, 0x065A]
+  ], // ARABIC LETTER YEH WITH SMALL V
   0x06D0: <int>[0xFBE4, 0xFBE5, 0xFBE6, 0xFBE7], //ARABIC LETTER E
   0x06D2: <int>[0xFBAE, 0xFBAF], // ARABIC LETTER YEH BARREE
   0x06D3: <int>[0xFBB0, 0xFBB1], // ARABIC LETTER YEH BARREE WITH HAMZA ABOVE
+  0x06D5: <int>[0x0647, 0xFEEA], // ARABIC LETTER AE
 };
 
 /*
@@ -158,6 +171,7 @@ const Map<int, int> _arabicDiacritics = <int, int>{
   0x0650: 0x0650, // Kasra
   0x0651: 0x0651, // Shadda
   0x0652: 0x0652, // Sukun
+  0x065A: 0x065A, // Small V Above
 
   0x0670: 0x0670, // Dagger alif
 
@@ -354,7 +368,14 @@ Iterable<String> _parse(String text) sync* {
         final position = _getCorrectForm(currentLetter, prevLetter, nextLetter);
         prevLetter = currentLetter;
         if (position != -1) {
-          newWord.insert(0, _arabicSubstitionA[currentLetter][position]);
+          final dynamic val = _arabicSubstitionA[currentLetter][position];
+          if (val is int) {
+            newWord.insert(0, val);
+          } else if (val is List<int>) {
+            for (final v in val) {
+              newWord.insert(0, v);
+            }
+          }
         } else {
           newWord.add(currentLetter);
         }
